@@ -71,6 +71,8 @@ export async function googleLogin(req: Request, res: Response) {
       { expiresIn: '7d' }
     );
 
+    console.log(`[AUTH] Login successful: database user.id=${user.id}, email=${user.email}`);
+
     return res.status(200).json({
       token,
       user: {

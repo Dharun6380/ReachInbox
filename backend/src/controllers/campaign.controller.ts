@@ -32,8 +32,12 @@ export async function createCampaign(req: AuthRequest, res: Response) {
   }
 
   try {
+    console.log(`[CAMPAIGN] Attempting to create campaign. userId from token: "${userId}"`);
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
+      console.log(`[CAMPAIGN] User lookup failed for ID: "${userId}"`);
+      const allUsers = await prisma.user.findMany({ select: { id: true, email: true } });
+      console.log(`[CAMPAIGN] Current database user records:`, JSON.stringify(allUsers));
       return res.status(404).json({ error: 'User record not found.' });
     }
 
