@@ -29,7 +29,7 @@ interface Stats {
   failed: number;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
 
 export function Dashboard({ user, token, onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<'scheduled' | 'sent'>('scheduled');
