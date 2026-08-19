@@ -1,0 +1,51 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String          @id @default(uuid())
+  email      String          @unique
+  name       String
+  avatar     String?         @db.Text
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  campaigns  EmailCampaign[]
+}
+
+model EmailCampaign {
+  id           String     @id @default(uuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject      String
+  body         String     @db.Text
+  delaySeconds Int
+  hourlyLimit  Int
+  status       String     // PENDING, PROCESSING, COMPLETED, FAILED
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  jobs         EmailJob[]
+
+  @@index([userId])
+}
+
+model EmailJob {
+  id           String        @id @default(uuid())
+  campaignId   String
+  campaign     EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  recipient    String
+  scheduledAt  DateTime
+  sentAt       DateTime?
+  status       String        // PENDING, SENT, FAILED
+  errorMessage String?       @db.Text
+  bullJobId    String?       
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([campaignId])
+  @@index([status])
+}
